@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+  /* --primary-color:#7d2ae8; */
+  /* --primary-color:#570987; */
+  --primary-color:#7D0DC3;
+  --secondary-color:#FDF7FF;
+  --third-color:#FDE9FF;
+  --white:#ffffff;
+  --max-width:1200px;
+  --text-dark: #2c2724;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+img {
+  display: flex;
+  width: 100%;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.nav_logo a {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.nav_logo a>span {
+  color: var(--primary-color);
+}
+
+ul {
+  list-style-type: none;
+}
+
+nav {
+  position: static;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+}
+
+.nav_links {
+  /* position: static; */
+  /* padding: 0; */
+  display: flex;
+  flex-direction: row;
+  transform: none;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav_links a {
+  color: var(--text-dark);
+  transition: 0.5s;
+  font-weight: 400;
+}
+
+.joinBtn {
+  padding: 5px;
+  background-color: #ffffff;
+  color: var(--primary-color);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: "Montserrat", sans-serif;
+  border:1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 5px 12px;
+}
+
+.nav_links a:hover {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.joinBtn:hover {
+  transition: 0.3s;
+  background-color: var(--primary-color);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.container {
+  display: grid;
+  height: 95vh;
+  grid-template-columns: auto auto;
+  /* justify-content: space-between; */
+  background-color: var(--secondary-color);
+  
+}
+
+.heroImg {
+  display: flex;
+  align-items: center;
+}
+
+.heroImg img {
+  width: 750px;
+  height: 600px;
+  
+}
+
+.container_left {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  justify-content: center;
+  padding-left: 100px;
+  
+}
+
+.container_left p {
+  margin-top: 25px;
+  font-size: 16px;
+  color: var(--text-dark);
+  line-height:1.4rem;
+}
+
+h1 {
+  line-height: 30px;
+  /* margin-bottom: 5px; */
+  font-size: 55px;
+}
+
+#gateway {
+  color: var(--primary-color);
+}
+
+.btn {
+  margin-top: 20px;
+}
+
+.btn button {
+  padding: 8px 15px;
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 1rem;
+  border: 1px solid var(--primary-color);
+}
+
+.btn button:hover {
+
+}

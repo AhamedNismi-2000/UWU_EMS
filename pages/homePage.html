@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="homePage.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row" id="header-container">
+            <div class="col-3">
+                <h1><span style="color: #7D0DC3;">UWU</span> Events</h1>
+            </div>
+            <div class="col-3">
+                <input type="text" class="form-control mt-3" name="search" id="searchBar" onkeyup="handleSearch()" placeholder="Search">
+            </div>
+            <div class="nav-bar col-6">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="#" onclick="loadData()">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" onclick="loadMyEvents()">My Events</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" onclick="loadPaidEvents()">Paid Events</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" onclick="loadMySavedEvents()">Saved Events</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="http://127.0.0.1/EMS_WAD/pages/addEvent.php">Manage Events</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="page2.html">Sign out</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div id="body-container" class="container">
+            <!-- Cards will be rendered here -->
+        </div>
+    </div>
+
+    <script>
+        let myArray = [];
+        let myArray1 = [];
+        let myArray2 = [];
+
+        async function loadData(search = "") {
+            try {
+                const response = await fetch(`http://localhost/wadProject/Controller/homePageController.php?search=${search}`);
+                const data = await response.json();
+                console.log(data);
+                myArray = data;
+                await loadSaveBtn();
+                renderCards(true,'home');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        async function eventDetails(event_id) {
+            try {
+                const response = await fetch(`http://localhost/wadProject/Controller/homePageController.php?event_id=${event_id}`);
+                const data = await response.json();
+                console.log(data);
+                myArray2 = data;
+                loadEventDetailsModel()
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        async function loadMyEvents() {
+            try {
+                const response = await fetch(`http://localhost/wadProject/Controller/homePageController.php?event=myEvents`);
+                const data = await response.json();
+                console.log(data);
+                myArray = data;
+                await loadSaveBtn();
+                renderCards(false,'myEvents');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        async function loadPaidEvents() {
+            try {
+                const response = await fetch(`http://localhost/wadProject/Controller/homePageController.php?event=paidEvents`);
+                const data = await response.json();
+                console.log(data);
+                myArray = data;
+                await loadSaveBtn();
+                renderCards(true,'paidEvents');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function loadMySavedEvents() {
+            try {
+                const response = await fetch(`http://localhost/wadProject/Controller/homePageController.php?event=savedEvents`);
+                const data = await response.json();
+                console.log(data);
+                myArray = data;
+                await loadSaveBtn();
+                renderCards(true,'savedEvents');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function loadSaveBtn() {
+            try {
+                const response = await fetch(`http://localhost/wadProject/Controller/homePageController.php?event=savedEvents`);
+                const data = await response.json();
+                myArray1 = data;
+            } catch (error) {
+                console.error('Error fetching saved events:', error);
+            }
+        }
+
+        function setSaveBtn(targetEventId) {
+            return myArray1.some(event => event.event_id === targetEventId);
+        }
+
+        function handleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            let value = searchBar.value;
+            console.log(value);
+            loadData(value);
+        }
+
+        async function saveEvent(event_id) {
+            try {
+                const res = await fetch(`http://localhost/wadProject/Controller/homePageController.php`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ 
+                        event_id: event_id ,
+                        status:"save"
+                    }),
+                });
+                console.log(res);
+                // Optionally, refresh saved events or update UI
+                await loadSaveBtn();
+                renderCards();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        async function unSaveEvent(event_id) {
+            try {
+                const res = await fetch(`http://localhost/wadProject/Controller/homePageController.php`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ 
+                        event_id: event_id ,
+                        status:"delete"
+                    }),
+                });
+                console.log(res);
+                // Optionally, refresh saved events or update UI
+                await loadSaveBtn();
+                renderCards();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+
+        function renderCards(setAvailable,page) {
+            const container = document.getElementById('body-container');
+            container.innerHTML = '';
+
+            const row = document.createElement('div');
+            row.className = 'card-box row col-12';
+
+            myArray.forEach(item => {
+                const col = document.createElement('div');
+                col.className = 'col-lg-3 col-md-4 col-sm-10 mb-4';
+
+                const card = document.createElement('div');
+                card.className = 'card col-12';
+
+                const btnPannel = document.createElement('div');
+                btnPannel.className = 'btnPannel col-12';
+                // modify start
+                const moreDetails = document.createElement('img');
+                moreDetails.src = '../icons/more-info.svg';
+                moreDetails.className = 'btnPannel-btn';
+                moreDetails.setAttribute('data-bs-toggle', 'modal');
+                moreDetails.setAttribute('data-bs-target', '#exampleModal');
+                moreDetails.onclick = () =>eventDetails(item.event_id);
+                moreDetails.alt = 'More Info';
+                //// modify end
+
+                const saveEventImg = document.createElement('img');
+                saveEventImg.src = setSaveBtn(item.event_id) ? '../icons/save.svg' : '../icons/unSave.svg';
+                saveEventImg.className = 'btnPannel-btn';
+                saveEventImg.alt = 'Save Event';
+                saveEventImg.onclick = () =>setSaveBtn(item.event_id) ? unSaveEvent(item.event_id) : saveEvent(item.event_id);
+
+                // const editEvent = document.createElement('img');
+                // editEvent.src = '../icons/edit-btn.svg';
+                // editEvent.className = 'btnPannel-btn';
+                // editEvent.hidden = setAvailable;
+                // editEvent.alt = 'Edit Event';
+
+                const img = document.createElement('img');
+                img.src = 'https://via.placeholder.com/150';
+                img.className = 'card-img-top';
+                img.alt = 'Event Image';
+
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+
+                const cardTitle = document.createElement('h5');
+                cardTitle.className = 'card-title d-flex justify-content-center';
+                cardTitle.innerText = item.event_title;
+
+                const cardDescription = document.createElement('div');
+                cardDescription.className = 'event-description-container';
+
+                const cardText = document.createElement('p');
+                cardText.className = 'event-description';
+                cardText.innerText = 'Description: ' + item.event_description;
+
+                const cardLink2 = document.createElement('a');
+                cardLink2.href = '#';
+                cardLink2.className = 'btn btn-outline-primary col-12 mt-1';
+                cardLink2.innerText = (page !== 'home' ? 'View Details' : 'Buy Tickets');
+                cardLink2.hidden = page === 'paidEvents';
+
+                cardBody.appendChild(img);
+                cardBody.appendChild(cardDescription);
+                cardDescription.appendChild(cardText);
+                cardBody.appendChild(cardLink2);
+                card.appendChild(btnPannel);
+                btnPannel.appendChild(moreDetails);
+                btnPannel.appendChild(saveEventImg);
+                card.appendChild(cardTitle);
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                row.appendChild(col);
+            });
+
+            container.appendChild(row);
+        }
+        loadData();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<!-- new start -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="event_title">event_title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h4 id="event_description"></h4>
+          <h6>Start Date:- <span id="start_date"></span> At <span id="start_time"></span></h6>
+          <h6>End Date:- <span id="end_date"></span> At <span id="end_time"></span></h6>
+          <h6>Venue:- <span id="venue"></span> </h6>
+          <h6>Ticket Price:- <span id="ticket_price"></span> LKR</h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function loadEventDetailsModel(){        
+        document.getElementById('event_title').innerHTML=myArray2[0]['event_title'];
+        document.getElementById('event_description').innerHTML=myArray2[0]['event_description'];
+        document.getElementById('start_date').innerHTML=myArray2[0]['start_date'];
+        document.getElementById('start_time').innerHTML=myArray2[0]['start_time'];
+        document.getElementById('end_date').innerHTML=myArray2[0]['end_date'];
+        document.getElementById('end_time').innerHTML=myArray2[0]['end_time'];
+        document.getElementById('venue').innerHTML=myArray2[0]['venue'];
+        document.getElementById('ticket_price').innerHTML=myArray2[0]['ticket_price'];
+    }
+  </script>
+      <!-- new end-->
+</body>
+
+</html>
